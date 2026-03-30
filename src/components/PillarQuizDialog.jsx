@@ -45,19 +45,19 @@ const PLATFORM_LINK_IMAGES = [
     key: "whatsapp-community",
     label: "WhatsApp Community",
     icon: WhatsAppIcon,
-    src: "/src/assets/images/whatsapp-community.jpeg",
+    src: "/whatsapp-community.jpeg",
   },
   {
     key: "whatsapp-chatbot",
     label: "WhatsApp Chatbot",
     icon: WhatsAppIcon,
-    src: "/src/assets/images/whatsapp-chatbot.jpeg",
+    src: "/whatsapp-chatbot.jpeg",
   },
   {
     key: "instagram-page",
     label: "Instagram Page",
     icon: InstagramIcon,
-    src: "/src/assets/images/instagram-page.jpeg",
+    src: "/instagram-page.jpeg",
   },
 ];
 

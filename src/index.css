@@ -12,7 +12,7 @@
     position: absolute;
     inset: 0;
     z-index: 0;
-    background-image: url("assets/images/hero-background-1.png");
+    background-image: url("/hero-background-1.png");
     background-repeat: no-repeat;
     background-position: center;
     background-size: cover;

@@ -1,6 +1,6 @@
 const heroImage = "/guruji.png";
-const leftDesign = "/src/assets/images/hero-left-design-1.png";
-const rightDesign = "/src/assets/images/hero-right-design-1.png";
+const leftDesign = "/hero-left-design-1.png";
+const rightDesign = "/hero-right-design-1.png";
 
 const Hero = () => {
     return (
