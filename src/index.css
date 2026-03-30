@@ -4,7 +4,7 @@
 /* —— Hero banner —— */
 .hero-section {
     --hero-accent: #d4c4a8;
-    min-height: 700px;
+    min-height: 580px;
     font-family: Georgia, "Times New Roman", serif;
 }
 
@@ -45,7 +45,9 @@
 }
 
 .hero-main {
-    min-height: 600px;
+    min-height: 520px;
+    /* Reserve visual room for bottom-anchored image on small screens */
+    padding-bottom: clamp(165px, 32vw, 260px);
 }
 
 .hero-copy {
@@ -96,12 +98,110 @@
 }
 
 .hero-figure {
-    width: clamp(260px, 42vw, 540px);
+    width: clamp(420px, 60vw, 860px);
 }
 
 .hero-img-wrap {
     width: 100%;
     max-width: 100%;
+    display: flex;
+    align-items: flex-end;
+    line-height: 0;
+    overflow: hidden;
+}
+
+.hero-guru-image {
+    display: block;
+    /* Push visible image content to banner bottom edge */
+    clip-path: none;
+    transform: translateY(22px);
+    margin-bottom: -22px;
+}
+
+@media (max-width: 1023px) {
+    .hero-section {
+        min-height: 620px;
+    }
+
+    .hero-main {
+        min-height: 560px;
+        padding-bottom: clamp(220px, 46vw, 360px);
+    }
+
+    .hero-figure {
+        width: min(94vw, 500px);
+    }
+
+    .hero-guru-image {
+        clip-path: none;
+        transform: translateY(10px);
+        margin-bottom: -10px;
+    }
+}
+
+/* Tablet-specific centering */
+@media (min-width: 768px) and (max-width: 1023px) {
+    .hero-main {
+        align-items: center;
+        justify-content: center;
+        padding-bottom: clamp(270px, 40vw, 380px);
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .hero-copy {
+        max-width: 780px;
+        width: min(88vw, 780px);
+        align-items: center;
+        text-align: center;
+        margin-left: auto;
+        margin-right: auto;
+        padding-top: clamp(22px, 5vw, 52px);
+        padding-bottom: clamp(22px, 5vw, 52px);
+    }
+
+    .hero-attribution {
+        text-align: center;
+        padding-left: 0;
+    }
+
+    .hero-figure {
+        width: min(64vw, 460px);
+        left: 50%;
+        right: auto;
+        transform: translateX(-50%);
+    }
+
+    .hero-guru-image {
+        transform: translateY(8px);
+        margin-bottom: -8px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .hero-section {
+        min-height: 640px;
+    }
+
+    .hero-main {
+        min-height: 560px;
+        padding-bottom: 0;
+    }
+
+    .hero-copy {
+        padding-top: 0;
+        padding-bottom: 0;
+    }
+
+    .hero-figure {
+        width: clamp(400px, 48vw, 760px);
+    }
+
+    .hero-guru-image {
+        clip-path: none;
+        transform: translateY(24px);
+        margin-bottom: -24px;
+    }
 }
 
 .elementor-animation-bob:hover {

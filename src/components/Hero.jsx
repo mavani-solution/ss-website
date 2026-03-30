@@ -64,7 +64,7 @@ const Hero = () => {
         <img src={rightDesign} alt="" className="h-auto w-full" />
       </div>
 
-      <div className="hero-social pointer-events-auto absolute top-1/2 left-0 z-40 hidden -translate-y-1/2 flex-col gap-3 sm:flex">
+      <div className="hero-social pointer-events-auto absolute top-1/2 left-0 z-40 hidden -translate-y-1/2 flex-col gap-3 lg:flex">
         {socialMedia.map((item) => (
           <a
             key={item.key}
@@ -78,8 +78,8 @@ const Hero = () => {
         ))}
       </div>
 
-      {/* Main Content */}
-      <div className="hero-main relative z-20 flex h-full w-full flex-col items-center justify-center gap-0 px-6 py-16 sm:px-10 lg:flex-row lg:gap-0 lg:py-0 lg:pl-30 xl:px-10">
+      {/* Main Content (text only) */}
+      <div className="hero-main relative z-20 mx-auto flex h-full w-full max-w-7xl flex-col items-center justify-center gap-0 px-6 pt-8 pb-0 sm:px-10 sm:pt-10 sm:pb-0 lg:items-start lg:justify-center lg:py-0 xl:px-10">
         {/* Left Text Content */}
         <div className="hero-copy flex w-full max-w-2xl flex-col items-center justify-center text-center text-white lg:w-1/2 lg:items-start lg:text-left">
           <p className="hero-org-title mb-5 text-white">
@@ -104,16 +104,16 @@ const Hero = () => {
             <p className="hero-attribution">— Sant Rajinder Singh Ji Maharaj</p>
           </div>
         </div>
+      </div>
 
-        {/* Right Hero Image */}
-        <div className="hero-figure mt-8 flex shrink-0 items-center justify-center lg:mt-0 lg:justify-start">
-          <div className="hero-img-wrap relative overflow-hidden">
-            <img
-              src={heroImage}
-              alt="Sant Rajinder Singh Ji Maharaj"
-              className="elementor-animation-bob block h-auto w-full object-cover p-[10px]"
-            />
-          </div>
+      {/* Hero image anchored to full hero-section bottom */}
+      <div className="hero-figure pointer-events-none absolute inset-x-0 bottom-0 z-20 flex items-end justify-center lg:inset-x-auto lg:right-[4%] lg:justify-end">
+        <div className="hero-img-wrap relative overflow-hidden">
+          <img
+            src={heroImage}
+            alt="Sant Rajinder Singh Ji Maharaj"
+            className="hero-guru-image elementor-animation-bob block h-auto w-full object-contain object-bottom"
+          />
         </div>
       </div>
     </section>

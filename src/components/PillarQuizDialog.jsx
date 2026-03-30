@@ -636,7 +636,7 @@ export default function PillarQuizDialog({
                   disabled={!canSave || isSaving}
                   className="w-full cursor-pointer bg-[#f4d67a] text-[#2d2430] hover:bg-[#e7c651] focus-visible:ring-[#f4d67a]/35"
                 >
-                  {isSaving ? "Saving..." : "Connected with us"}
+                  {isSaving ? "Saving..." : "Connect with us"}
                 </Button>
                 {saveError && (
                   <p role="alert" className="mt-2 text-sm text-red-200">
