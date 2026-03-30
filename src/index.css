@@ -616,7 +616,7 @@
     position: relative;
     overflow: hidden;
     min-height: 16rem;
-    pointer-events: none;
+    pointer-events: auto;
     width: 100%;
 }
 @keyframes pillar-step-in {
