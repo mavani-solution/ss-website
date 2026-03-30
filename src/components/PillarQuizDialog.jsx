@@ -547,22 +547,24 @@ export default function PillarQuizDialog({
                 </p>
               </DialogHeader>
 
-             <div className="grid w-full gap-3 sm:grid-cols-3">
+              <div className="flex w-full snap-x snap-mandatory gap-3 overflow-x-auto pb-2 sm:grid sm:grid-cols-2 lg:grid-cols-3 sm:overflow-visible sm:pb-0">
                 {PLATFORM_LINK_IMAGES.map((item) => {
                   const Icon = item.icon;
                   return (
                     <div
                       key={item.key}
-                      className="rounded-xl border border-white/25 bg-white/10 p-2"
+                      className="min-w-[86%] snap-center rounded-xl border border-white/25 bg-white/10 p-3 sm:min-w-0 sm:p-2"
                     >
-                      <div className="mb-2 flex items-center justify-center gap-2 text-white">
-                        <Icon className="h-4 w-4" aria-hidden="true" />
-                        <p className="text-xs sm:text-sm font-semibold">{item.label}</p>
+                      <div className="mb-2.5 flex items-center justify-center gap-2 text-white sm:mb-2">
+                        <Icon className="h-5 w-5 sm:h-4 sm:w-4" aria-hidden="true" />
+                        <p className="text-sm font-semibold sm:text-xs lg:text-sm">
+                          {item.label}
+                        </p>
                       </div>
                       <img
                         src={item.src}
                         alt={item.label}
-                        className="h-auto w-full rounded-lg border border-[rgb(118_73_121/12%)] bg-white object-contain p-1.5"
+                        className="h-auto w-full rounded-lg border border-[rgb(118_73_121/12%)] bg-white object-contain p-2 sm:p-1.5"
                       />
                     </div>
                   );
