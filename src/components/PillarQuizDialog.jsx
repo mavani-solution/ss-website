@@ -87,6 +87,8 @@ export default function PillarQuizDialog({
   const [stageQuestions, setStageQuestions] = useState([]);
   const confettiCanvasRef = useRef(null);
   const confettiShotRef = useRef(null);
+  const nameInputRef = useRef(null);
+  const phoneInputRef = useRef(null);
 
   useEffect(() => {
     if (
@@ -303,6 +305,23 @@ export default function PillarQuizDialog({
     setPhoneError(`Enter all ${PHONE_DIGITS} digits.`);
   };
 
+  const focusMobileInput = (inputRef) => {
+    const input = inputRef.current;
+    if (!input) return;
+    input.focus();
+    input.scrollIntoView({ block: "center", behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    if (!open || step !== 5) return;
+    const input = nameInputRef.current;
+    if (!input) return;
+    window.requestAnimationFrame(() => {
+      input.focus();
+      input.scrollIntoView({ block: "center", behavior: "smooth" });
+    });
+  }, [open, step]);
+
   const handleSave = async () => {
     if (!pillar) return;
     if (!name.trim()) return;
@@ -338,7 +357,7 @@ export default function PillarQuizDialog({
       }, SAVE_API_TIMEOUT_MS);
 
       const response = await fetch(
-        "https://quiz-score-api.onrender.com/api/save-score",
+        "https://scoreapi.mavanisolution.in/api/save-score",
         {
           method: "POST",
           headers: {
@@ -580,11 +599,23 @@ export default function PillarQuizDialog({
                     Name
                   </Label>
                   <Input
+                    ref={nameInputRef}
                     id="pillar-name"
                     type="text"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        focusMobileInput(phoneInputRef);
+                      }
+                    }}
+                    onPointerDown={() => focusMobileInput(nameInputRef)}
+                    onTouchEnd={() => focusMobileInput(nameInputRef)}
                     autoComplete="name"
+                    autoFocus={step === 5}
+                    autoCapitalize="words"
+                    enterKeyHint="next"
                     placeholder="Your name"
                     className="border-white/35 bg-white text-[#2d2430] placeholder:text-[#5f5267]"
                   />
@@ -597,14 +628,24 @@ export default function PillarQuizDialog({
                     Phone number
                   </Label>
                   <Input
+                    ref={phoneInputRef}
                     id="pillar-phone"
                     type="tel"
                     value={phone}
                     onChange={handlePhoneChange}
                     onBlur={handlePhoneBlur}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        e.currentTarget.blur();
+                      }
+                    }}
+                    onPointerDown={() => focusMobileInput(phoneInputRef)}
+                    onTouchEnd={() => focusMobileInput(phoneInputRef)}
                     autoComplete="tel"
                     inputMode="numeric"
                     pattern="[0-9]*"
+                    enterKeyHint="done"
                     maxLength={PHONE_DIGITS}
                     placeholder="10-digit mobile number"
                     aria-invalid={phoneError ? "true" : "false"}
