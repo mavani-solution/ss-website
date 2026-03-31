@@ -348,8 +348,12 @@ export default function PillarQuizDialog({
     }
 
     if (activeKeyboardField === "name") {
+      const isFirstCharacter = name.trim().length === 0;
       const nextChar = keyboardUppercase ? key.toUpperCase() : key;
       setName((value) => `${value}${nextChar}`);
+      if (isFirstCharacter && keyboardUppercase) {
+        setKeyboardUppercase(false);
+      }
       return;
     }
 
@@ -645,8 +649,18 @@ export default function PillarQuizDialog({
                     type="text"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    onFocus={() => setActiveKeyboardField("name")}
-                    onClick={() => setActiveKeyboardField("name")}
+                    onFocus={() => {
+                      setActiveKeyboardField("name");
+                      if (name.trim().length === 0) {
+                        setKeyboardUppercase(true);
+                      }
+                    }}
+                    onClick={() => {
+                      setActiveKeyboardField("name");
+                      if (name.trim().length === 0) {
+                        setKeyboardUppercase(true);
+                      }
+                    }}
                     autoComplete="name"
                     placeholder="Your name"
                     className="border-white/35 bg-white text-[#2d2430] placeholder:text-[#5f5267]"
@@ -698,9 +712,7 @@ export default function PillarQuizDialog({
                 <div className="rounded-2xl border border-white/20 bg-white/10 p-3 backdrop-blur-sm">
                   <div className="mb-3 flex items-center justify-between text-white">
                     <p className="text-sm font-semibold sm:text-base">
-                      {activeKeyboardField === "name"
-                        ? "Virtual Keyboard"
-                        : "Number Keyboard"}
+                    Keyboard
                     </p>
                     <button
                       type="button"
