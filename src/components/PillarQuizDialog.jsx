@@ -337,7 +337,7 @@ export default function PillarQuizDialog({
       return;
     }
 
-    if (key === "shift") {
+    if (key === "caps") {
       setKeyboardUppercase((value) => !value);
       return;
     }
@@ -720,10 +720,10 @@ export default function PillarQuizDialog({
                         {rowIndex === 2 && activeKeyboardField === "name" && (
                           <button
                             type="button"
-                            onClick={() => handleVirtualKeyPress("shift")}
+                            onClick={() => handleVirtualKeyPress("caps")}
                             className="min-w-[3.25rem] rounded-xl bg-white/90 px-3 py-2 text-sm font-semibold text-[#2d2430]"
                           >
-                            Shift
+                            Caps lock
                           </button>
                         )}
                         {row.map((key) => (
@@ -764,15 +764,6 @@ export default function PillarQuizDialog({
                           Space
                         </button>
                       )}
-                      {activeKeyboardField === "phone" && (
-                        <button
-                          type="button"
-                          onClick={() => handleVirtualKeyPress("backspace")}
-                          className="min-w-[5rem] rounded-xl bg-white px-4 py-2 text-sm font-semibold text-[#2d2430] shadow-sm hover:bg-[#fff7e6]"
-                        >
-                          Del
-                        </button>
-                      )}
                       <button
                         type="button"
                         onClick={() => handleVirtualKeyPress("done")}
@@ -785,7 +776,12 @@ export default function PillarQuizDialog({
                 </div>
               )}
 
-              <div className="mt-auto w-full">
+              <div
+                className={cn(
+                  "mt-auto w-full",
+                  activeKeyboardField && "pb-3 sm:pb-4",
+                )}
+              >
                 <Button
                   type="button"
                   onClick={handleSave}
