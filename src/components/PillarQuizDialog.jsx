@@ -21,6 +21,17 @@ const PHONE_DIGITS = 10;
 const QUESTION_COUNT = 3;
 const SECONDS_PER_QUESTION = 30;
 const SAVE_API_TIMEOUT_MS = 12000;
+const NAME_KEY_ROWS = [
+  ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p"],
+  ["a", "s", "d", "f", "g", "h", "j", "k", "l"],
+  ["z", "x", "c", "v", "b", "n", "m"],
+];
+const PHONE_KEY_ROWS = [
+  ["1", "2", "3"],
+  ["4", "5", "6"],
+  ["7", "8", "9"],
+  ["0"],
+];
 
 function WhatsAppIcon(props) {
   return (
@@ -82,13 +93,13 @@ export default function PillarQuizDialog({
   const [saveError, setSaveError] = useState("");
   const [isSaving, setIsSaving] = useState(false);
   const [showConnectedContent, setShowConnectedContent] = useState(false);
+  const [activeKeyboardField, setActiveKeyboardField] = useState(null);
+  const [keyboardUppercase, setKeyboardUppercase] = useState(true);
   const [score, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(SECONDS_PER_QUESTION);
   const [stageQuestions, setStageQuestions] = useState([]);
   const confettiCanvasRef = useRef(null);
   const confettiShotRef = useRef(null);
-  const nameInputRef = useRef(null);
-  const phoneInputRef = useRef(null);
 
   useEffect(() => {
     if (
@@ -168,6 +179,8 @@ export default function PillarQuizDialog({
     setSaveError("");
     setIsSaving(false);
     setShowConnectedContent(false);
+    setActiveKeyboardField(null);
+    setKeyboardUppercase(true);
     processingRef.current = false;
   }, []);
 
@@ -305,22 +318,51 @@ export default function PillarQuizDialog({
     setPhoneError(`Enter all ${PHONE_DIGITS} digits.`);
   };
 
-  const focusMobileInput = (inputRef) => {
-    const input = inputRef.current;
-    if (!input) return;
-    input.focus();
-    input.scrollIntoView({ block: "center", behavior: "smooth" });
+  const handleVirtualKeyPress = (key) => {
+    if (!activeKeyboardField) return;
+
+    if (key === "backspace") {
+      if (activeKeyboardField === "name") {
+        setName((value) => value.slice(0, -1));
+      } else {
+        setPhone((value) => value.slice(0, -1));
+      }
+      return;
+    }
+
+    if (key === "space") {
+      if (activeKeyboardField === "name") {
+        setName((value) => `${value} `);
+      }
+      return;
+    }
+
+    if (key === "shift") {
+      setKeyboardUppercase((value) => !value);
+      return;
+    }
+
+    if (key === "done") {
+      setActiveKeyboardField(null);
+      return;
+    }
+
+    if (activeKeyboardField === "name") {
+      const nextChar = keyboardUppercase ? key.toUpperCase() : key;
+      setName((value) => `${value}${nextChar}`);
+      return;
+    }
+
+    setPhone((value) => sanitizePhoneInput(`${value}${key}`));
+    setPhoneError("");
   };
 
-  useEffect(() => {
-    if (!open || step !== 5) return;
-    const input = nameInputRef.current;
-    if (!input) return;
-    window.requestAnimationFrame(() => {
-      input.focus();
-      input.scrollIntoView({ block: "center", behavior: "smooth" });
-    });
-  }, [open, step]);
+  const keyboardRows =
+    activeKeyboardField === "phone"
+      ? PHONE_KEY_ROWS
+      : NAME_KEY_ROWS.map((row) =>
+          row.map((key) => (keyboardUppercase ? key.toUpperCase() : key))
+        );
 
   const handleSave = async () => {
     if (!pillar) return;
@@ -599,23 +641,13 @@ export default function PillarQuizDialog({
                     Name
                   </Label>
                   <Input
-                    ref={nameInputRef}
                     id="pillar-name"
                     type="text"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        e.preventDefault();
-                        focusMobileInput(phoneInputRef);
-                      }
-                    }}
-                    onPointerDown={() => focusMobileInput(nameInputRef)}
-                    onTouchEnd={() => focusMobileInput(nameInputRef)}
+                    onFocus={() => setActiveKeyboardField("name")}
+                    onClick={() => setActiveKeyboardField("name")}
                     autoComplete="name"
-                    autoFocus={step === 5}
-                    autoCapitalize="words"
-                    enterKeyHint="next"
                     placeholder="Your name"
                     className="border-white/35 bg-white text-[#2d2430] placeholder:text-[#5f5267]"
                   />
@@ -628,24 +660,16 @@ export default function PillarQuizDialog({
                     Phone number
                   </Label>
                   <Input
-                    ref={phoneInputRef}
                     id="pillar-phone"
                     type="tel"
                     value={phone}
                     onChange={handlePhoneChange}
                     onBlur={handlePhoneBlur}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        e.preventDefault();
-                        e.currentTarget.blur();
-                      }
-                    }}
-                    onPointerDown={() => focusMobileInput(phoneInputRef)}
-                    onTouchEnd={() => focusMobileInput(phoneInputRef)}
+                    onFocus={() => setActiveKeyboardField("phone")}
+                    onClick={() => setActiveKeyboardField("phone")}
                     autoComplete="tel"
                     inputMode="numeric"
                     pattern="[0-9]*"
-                    enterKeyHint="done"
                     maxLength={PHONE_DIGITS}
                     placeholder="10-digit mobile number"
                     aria-invalid={phoneError ? "true" : "false"}
@@ -669,6 +693,97 @@ export default function PillarQuizDialog({
                   )}
                 </div>
               </div>
+
+              {activeKeyboardField && (
+                <div className="rounded-2xl border border-white/20 bg-white/10 p-3 backdrop-blur-sm">
+                  <div className="mb-3 flex items-center justify-between text-white">
+                    <p className="text-sm font-semibold sm:text-base">
+                      {activeKeyboardField === "name"
+                        ? "Virtual Keyboard"
+                        : "Number Keyboard"}
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => setActiveKeyboardField(null)}
+                      className="cursor-pointer rounded-full border border-white/20 px-3 py-1 text-xs font-semibold hover:bg-white/10"
+                    >
+                      Close
+                    </button>
+                  </div>
+
+                  <div className="flex flex-col gap-2">
+                    {keyboardRows.map((row, rowIndex) => (
+                      <div
+                        key={`keyboard-row-${rowIndex}`}
+                        className="flex justify-center gap-2"
+                      >
+                        {rowIndex === 2 && activeKeyboardField === "name" && (
+                          <button
+                            type="button"
+                            onClick={() => handleVirtualKeyPress("shift")}
+                            className="min-w-[3.25rem] rounded-xl bg-white/90 px-3 py-2 text-sm font-semibold text-[#2d2430]"
+                          >
+                            Shift
+                          </button>
+                        )}
+                        {row.map((key) => (
+                          <button
+                            type="button"
+                            key={key}
+                            onClick={() =>
+                              handleVirtualKeyPress(
+                                activeKeyboardField === "phone"
+                                  ? key
+                                  : key.toLowerCase()
+                              )
+                            }
+                            className="min-w-[2.7rem] rounded-xl bg-white px-3 py-2 text-sm font-semibold text-[#2d2430] shadow-sm hover:bg-[#fff7e6]"
+                          >
+                            {key}
+                          </button>
+                        ))}
+                        {rowIndex === 2 && activeKeyboardField === "name" && (
+                          <button
+                            type="button"
+                            onClick={() => handleVirtualKeyPress("backspace")}
+                            className="min-w-[3.25rem] rounded-xl bg-white/90 px-3 py-2 text-sm font-semibold text-[#2d2430]"
+                          >
+                            Del
+                          </button>
+                        )}
+                      </div>
+                    ))}
+
+                    <div className="flex justify-center gap-2">
+                      {activeKeyboardField === "name" && (
+                        <button
+                          type="button"
+                          onClick={() => handleVirtualKeyPress("space")}
+                          className="min-w-[8rem] rounded-xl bg-white px-4 py-2 text-sm font-semibold text-[#2d2430] shadow-sm hover:bg-[#fff7e6]"
+                        >
+                          Space
+                        </button>
+                      )}
+                      {activeKeyboardField === "phone" && (
+                        <button
+                          type="button"
+                          onClick={() => handleVirtualKeyPress("backspace")}
+                          className="min-w-[5rem] rounded-xl bg-white px-4 py-2 text-sm font-semibold text-[#2d2430] shadow-sm hover:bg-[#fff7e6]"
+                        >
+                          Del
+                        </button>
+                      )}
+                      <button
+                        type="button"
+                        onClick={() => handleVirtualKeyPress("done")}
+                        className="min-w-[5rem] rounded-xl bg-[#f4d67a] px-4 py-2 text-sm font-semibold text-[#2d2430] shadow-sm hover:bg-[#e7c651]"
+                      >
+                        Done
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               <div className="mt-auto w-full">
                 <Button
