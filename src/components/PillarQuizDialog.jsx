@@ -95,6 +95,7 @@ export default function PillarQuizDialog({
   const [showConnectedContent, setShowConnectedContent] = useState(false);
   const [activeKeyboardField, setActiveKeyboardField] = useState(null);
   const [keyboardUppercase, setKeyboardUppercase] = useState(true);
+  const [showVirtualKeyboard, setShowVirtualKeyboard] = useState(false);
   const [score, setScore] = useState(0);
   const [timeLeft, setTimeLeft] = useState(SECONDS_PER_QUESTION);
   const [stageQuestions, setStageQuestions] = useState([]);
@@ -146,6 +147,26 @@ export default function PillarQuizDialog({
   useEffect(() => {
     selectedRef.current = selectedIndex;
   }, [selectedIndex]);
+
+  useEffect(() => {
+    if (typeof window === "undefined" || typeof navigator === "undefined") {
+      return;
+    }
+
+    const updateKeyboardMode = () => {
+      const isTouchDevice =
+        window.matchMedia("(pointer: coarse)").matches ||
+        navigator.maxTouchPoints > 0;
+      setShowVirtualKeyboard(!isTouchDevice);
+    };
+
+    updateKeyboardMode();
+    window.addEventListener("resize", updateKeyboardMode);
+
+    return () => {
+      window.removeEventListener("resize", updateKeyboardMode);
+    };
+  }, []);
 
   const quiz = useMemo(() => {
     if (!pillar?.id) return null;
@@ -650,14 +671,18 @@ export default function PillarQuizDialog({
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     onFocus={() => {
-                      setActiveKeyboardField("name");
-                      if (name.trim().length === 0) {
+                      if (showVirtualKeyboard) {
+                        setActiveKeyboardField("name");
+                      }
+                      if (showVirtualKeyboard && name.trim().length === 0) {
                         setKeyboardUppercase(true);
                       }
                     }}
                     onClick={() => {
-                      setActiveKeyboardField("name");
-                      if (name.trim().length === 0) {
+                      if (showVirtualKeyboard) {
+                        setActiveKeyboardField("name");
+                      }
+                      if (showVirtualKeyboard && name.trim().length === 0) {
                         setKeyboardUppercase(true);
                       }
                     }}
@@ -679,8 +704,16 @@ export default function PillarQuizDialog({
                     value={phone}
                     onChange={handlePhoneChange}
                     onBlur={handlePhoneBlur}
-                    onFocus={() => setActiveKeyboardField("phone")}
-                    onClick={() => setActiveKeyboardField("phone")}
+                    onFocus={() => {
+                      if (showVirtualKeyboard) {
+                        setActiveKeyboardField("phone");
+                      }
+                    }}
+                    onClick={() => {
+                      if (showVirtualKeyboard) {
+                        setActiveKeyboardField("phone");
+                      }
+                    }}
                     autoComplete="tel"
                     inputMode="numeric"
                     pattern="[0-9]*"
@@ -708,7 +741,7 @@ export default function PillarQuizDialog({
                 </div>
               </div>
 
-              {activeKeyboardField && (
+              {showVirtualKeyboard && activeKeyboardField && (
                 <div className="rounded-2xl border border-white/20 bg-white/10 p-3 backdrop-blur-sm">
                   <div className="mb-3 flex items-center justify-between text-white">
                     <p className="text-sm font-semibold sm:text-base">
