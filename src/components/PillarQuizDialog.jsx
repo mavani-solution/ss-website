@@ -809,6 +809,15 @@ export default function PillarQuizDialog({
                           Space
                         </button>
                       )}
+                      {activeKeyboardField === "phone" && (
+                        <button
+                          type="button"
+                          onClick={() => handleVirtualKeyPress("backspace")}
+                          className="min-w-[5rem] rounded-xl bg-white px-4 py-2 text-sm font-semibold text-[#2d2430] shadow-sm hover:bg-[#fff7e6]"
+                        >
+                          Del
+                        </button>
+                      )}
                       <button
                         type="button"
                         onClick={() => handleVirtualKeyPress("done")}
